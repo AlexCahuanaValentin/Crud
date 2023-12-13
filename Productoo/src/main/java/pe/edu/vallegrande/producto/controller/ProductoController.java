@@ -10,10 +10,12 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.gson.Gson;
 
 import java.util.List;
+
 import pe.edu.vallegrande.producto.model.Producto;
 import pe.edu.vallegrande.producto.service.CrudProductoService;
 
-@WebServlet({ "/btnBuscar", "/CerrarSesionX", "/ClienteProcesar" }) // Mapea el servlet a la URL raíz
+@WebServlet({ "/ClienteBuscar", "/ClienteInactivos", "/CerrarSesionX", "/ClienteProcesar" }) // Mapea el servlet a la URL raíz
+
 public class ProductoController extends HttpServlet {
 	/**
 	 * 
@@ -26,8 +28,11 @@ public class ProductoController extends HttpServlet {
 			throws ServletException, IOException {
 		String path = request.getServletPath();
 		switch (path) {
-		case "/btnBuscar":
+		case "/ClienteBuscar":
 			buscar(request, response);
+			break;
+		case "/ClienteInactivos":
+			inactivos(request, response);
 			break;
 		case "/ClienteProcesar":
 			procesar(request, response);
@@ -52,6 +57,7 @@ public class ProductoController extends HttpServlet {
 		bean.setType(request.getParameter("type"));
 		bean.setBrand(request.getParameter("brand"));
 		bean.setState(request.getParameter("state"));
+		bean.setCategory_name(request.getParameter("category_name"));
 		// Proceso
 		try {
 			switch (accion) {
@@ -64,6 +70,10 @@ public class ProductoController extends HttpServlet {
 			case ControllerUtil.CRUD_ELIMINAR:
 				clienteService.delete(id);
 				break;
+			case ControllerUtil.CRUD_ACTIVAR:
+				clienteService.activar(id);
+				break;
+				
 			default:
 				throw new IllegalArgumentException("Unexpected value: " + accion);
 			}
@@ -82,6 +92,22 @@ public class ProductoController extends HttpServlet {
 		model.setName(name);
 		model.setType(type);
 		List<Producto> lista = clienteService.get(model);
+		// Convertir lista en JSON
+		Gson gson = new Gson();
+		String data = gson.toJson(lista);
+		// Reporte
+		ControllerUtil.responseJson(response, data);
+	}
+	
+	private void inactivos(HttpServletRequest request, HttpServletResponse response) {
+		// Datos
+		String name = request.getParameter("name");
+		String type = request.getParameter("type");
+		// Proceso
+		Producto model = new Producto();
+		model.setName(name);
+		model.setType(type);
+		List<Producto> lista = clienteService.getInactive(model);
 		// Convertir lista en JSON
 		Gson gson = new Gson();
 		String data = gson.toJson(lista);

@@ -1,718 +1,432 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-	pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="ISO-8859-1">
-
-<!-- Favicon -->
-<link rel="icon" type="image/png" href="img/Claro.svg.png">
-
+<meta charset="utf-8">
+<link rel="stylesheet" href="CSS/style.css">
 <title>CLARO</title>
+<script type="text/javascript"
+	src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+
 <link
-	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
 	rel="stylesheet"
-	integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
+	integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
 	crossorigin="anonymous">
 <script
-	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
-	integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+	integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
 	crossorigin="anonymous"></script>
+<script src="https://rawgit.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
+<script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js"
+	crossorigin="anonymous"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+	href="https://fonts.googleapis.com/css2?family=Imprima&display=swap"
+	rel="stylesheet">
+<link rel="stylesheet" href="CSS/style.css">
 </head>
 
 <body>
+	<!-- MENU LATERAL -->
+	<div class="col">
+		<jsp:include page="menu.jsp"></jsp:include>
+	</div>
 
-	<div class="container-fluid p-0">
-
-		<div class="row">
-
-			<!-- MENU LATERAL -->
-			<div class="col">
-				<jsp:include page="menu.jsp"></jsp:include>
+	<!-- MENU SUPERIOR DE HORA -->
+	<nav
+		class="navbar navbar-expand-lg navbar-danger bg-danger navbar-with-datetime">
+		<div class="container-fluid">
+			<div
+				class="d-flex justify-content-center align-items-center flex-grow-1">
+				<span id="currentDateTime"
+					class="nav-link text-white text-center w-100"> <span
+					id="currentTime" style="font-size: 34px;"></span> - <span
+					id="currentDate"></span>
+				</span>
 			</div>
-			
-			
-			<!-- MENU SUPERIOR DE HORA -->
-			<nav
-				class="navbar navbar-expand-lg navbar-danger bg-danger navbar-with-datetime">
-				<div class="container-fluid">
-					<div
-						class="d-flex justify-content-center align-items-center flex-grow-1">
-						<span id="currentDateTime"
-							class="nav-link text-white text-center w-100"> <span
-							id="currentTime" style="font-size: 34px;"></span> - <span
-							id="currentDate"></span>
-						</span>
-					</div>
-					<button class="navbar-toggler" type="button"
-						data-bs-toggle="collapse" data-bs-target="#navbarNav"
-						aria-controls="navbarNav" aria-expanded="false"			
-						aria-label="Toggle navigation">
-						<span class="navbar-toggler-icon"></span>
-					</button>
-					<div class="collapse navbar-collapse justify-content-end"
-						id="navbarNav">
-						<ul class="navbar-nav">
-							<li class="nav-item dropdown"><a
-								class="nav-link dropdown-toggle text-white" href="#"
-								id="logoutDropdown" role="button" data-bs-toggle="dropdown"
-								aria-expanded="false"> Cerrar sesion </a>
-								<ul class="dropdown-menu dropdown-menu-end"
-									aria-labelledby="logoutDropdown">
-									<li>
-										<div class="d-flex flex-column align-items-center p-3">
-											<img src="img\Claro.svg.png" alt="Logo CASSIATEC"
-												class="logo-img" style="height: 6rem"> <span
-												class="align-self-center">Admin</span>
-											<button class="btn btn-danger mt-2" data-bs-toggle="modal"
-												data-bs-target="#confirmLogoutModal">Cerrar sesion</button>
-										</div>
-									</li>
-								</ul></li>
-						</ul>
-					</div>
-				</div>
-			</nav>
-
-			<!-- MENU SUPERIOR DE HORA -->
-			<script>
-			
-			//JS PARA QUE FUNCIONE LA BARRA DE HORA
-			
-	// Obtener el elemento para mostrar la hora y fecha y actualizarlo cada segundo
-	var currentDateTimeElement = document.getElementById("currentDateTime");
-
-	// Funcion para obtener la hora actual en formato HH:MM:SS
-	function getCurrentTime() {
-		var currentDate = new Date();
-		var hours = currentDate.getHours().toString().padStart(2, "0");
-		var minutes = currentDate.getMinutes().toString().padStart(2, "0");
-		var seconds = currentDate.getSeconds().toString().padStart(2, "0");
-		return hours + ":" + minutes + ":" + seconds;
-	}
-
-	// Funcion para obtener la fecha actual en formato DD/MM/YYYY
-	function getCurrentDate() {
-		var currentDate = new Date();
-		var days = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'];
-		var day = days[currentDate.getDay()];
-		var date = currentDate.getDate().toString().padStart(2, "0");
-		var months = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
-		var month = months[currentDate.getMonth()];
-		var year = currentDate.getFullYear().toString();
-		return day + ' ' + date + ' de ' + month + ' de ' + year;
-	}
-
-	// Actualizar la hora y fecha cada segundo
-	function updateCurrentDateTime() {
-		var currentTime = getCurrentTime();
-		var currentDate = getCurrentDate();
-		currentDateTimeElement.textContent = currentTime + " - " + currentDate;
-	}
-
-	// Actualizar la hora y fecha inicial y luego cada segundo
-	updateCurrentDateTime();
-	setInterval(updateCurrentDateTime, 1000);
-
-	function updateCurrentDateTime() {
-		var currentTimeElement = document.getElementById("currentTime");
-		var currentDateElement = document.getElementById("currentDate");
-
-		var currentTime = getCurrentTime();
-		var currentDate = getCurrentDate();
-
-		currentTimeElement.textContent = currentTime;
-		currentDateElement.textContent = currentDate;
-	}
-</script>
-
-			<!-- BOTON CERRAR SESION -->
-			<div class="modal fade" id="confirmLogoutModal" tabindex="-1"
-				aria-labelledby="confirmLogoutModalLabel" aria-hidden="true">
-				<div class="modal-dialog modal-dialog-centered">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title" id="confirmLogoutModalLabel">Confirmar
-								cierre de sesion</h5>
-							<button type="button" class="btn-close" data-bs-dismiss="modal"
-								aria-label="Close"></button>
-						</div>
-						<div class="modal-body">
-							<div class="text-center mx-auto">
-								<img src="img\cerrarSESION.png" alt="Logo CASSIATEC"
-									class="logo-img" style="height: 6rem">
-								<H4>
-									<span>¿Desea cerrar <br>sesion?
-									</span>
-								</H4>
-							</div>
-						</div>
-						<div class="modal-footer">
-							<div class="text-center mx-auto">
-								<button type="button" class="btn btn-danger"
-									onclick="cerrarSesion()">Cerrar sesion</button>
-								<script>
-									function cerrarSesion() {
-										// Redireccionar a la pÃ¡gina de inicio de sesiÃ³n
-										window.location.href = "index.jsp";
-									}
-								</script>
-							</div>
-						</div>
-					</div>
-				</div>
+			<button class="navbar-toggler" type="button"
+				data-bs-toggle="collapse" data-bs-target="#navbarNav"
+				aria-controls="navbarNav" aria-expanded="false"
+				aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse justify-content-end"
+				id="navbarNav">
+				<ul class="navbar-nav">
+					<li class="nav-item dropdown"><a
+						class="nav-link dropdown-toggle text-white" href="#"
+						id="logoutDropdown" role="button" data-bs-toggle="dropdown"
+						aria-expanded="false"> Cerrar sesion </a>
+						<ul class="dropdown-menu dropdown-menu-end"
+							aria-labelledby="logoutDropdown">
+							<li>
+								<div class="d-flex flex-column align-items-center p-3">
+									<img src="img\Claro.svg.png" alt="Logo CASSIATEC"
+										class="logo-img" style="height: 6rem"> <span
+										class="align-self-center">Admin</span>
+									<button class="btn btn-danger mt-2" data-bs-toggle="modal"
+										data-bs-target="#confirmLogoutModal">Cerrar sesion</button>
+								</div>
+							</li>
+						</ul></li>
+				</ul>
 			</div>
-
 		</div>
+	</nav>
 
-		<!-- TARJETA -->
-		<div class="row">
-			<div class="p-4	">
-				<div class="container">
-					<div class="row">
-						<div class="col-md-10 mx-auto">
-							<div class="card">
-								<h2 class="text-center mt-4">
-											Listar Productos</strong>
-										</h2>
-								<div class="card-body">
-									<form method="post" action="productBuscar">
-								  <div class="mb-3 row">
-								   
-								  
-								    <div class="col-sm-3" id="barra_field">
-								      <input type="text" class="form-control" id="name" name="name" placeholder="Ingrese el Nombre">
-								    </div>
-								  
-								    <div class="col-sm-3" id="objeto_field" style="display: none;">
-								      <input type="text" class="form-control" id="type" name="type" placeholder="Ingrese el Tipo">
-								    </div>
-								    
-		
-								    <div class="col-sm-2">
-								      <select class="form-select" id="search_field" name="search_field" onchange="updateSearchFields()">
-								        <option value="name" selected>Nombre</option>
-								        <option value="type">Tipo</option>
-								      </select>
-								    </div>
-								    
-								    <div class="col-sm-1">
-								      <button type="button" class="btn btn-outline-primary mb-3" id="btnBuscar" name="btnBuscar">Buscar</button>
-								    </div>	
-    
+	<!-- MENU SUPERIOR DE HORA -->
+	<script>
+		//JS PARA QUE FUNCIONE LA BARRA DE HORA
 
-											<div class="col-sm-1">
-												<button type="button" class="btn btn-outline-primary mb-2"
-													id="btnNuevo" name="btnNuevo">Insertar</button>
-											</div>
+		// Obtener el elemento para mostrar la hora y fecha y actualizarlo cada segundo
+		var currentDateTimeElement = document.getElementById("currentDateTime");
 
-  
-											<div class="form-check form-switch" style="right: 100%;">
-												<input class="form-check-input" type="checkbox"
-													role="switch" id="flexSwitchCheckDefault" checked
-													onchange="filtrarRegistros()"> <label
-													class="form-check-label" for="flexSwitchCheckDefault"
-													id="labelSwitch">Activo</label>
-											</div>
-											
-										</div>
-									</form>
+		// Funcion para obtener la hora actual en formato HH:MM:SS
+		function getCurrentTime() {
+			var currentDate = new Date();
+			var hours = currentDate.getHours().toString().padStart(2, "0");
+			var minutes = currentDate.getMinutes().toString().padStart(2, "0");
+			var seconds = currentDate.getSeconds().toString().padStart(2, "0");
+			return hours + ":" + minutes + ":" + seconds;
+		}
+
+		// Funcion para obtener la fecha actual en formato DD/MM/YYYY
+		function getCurrentDate() {
+			var currentDate = new Date();
+			var days = [ 'Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves',
+					'Viernes', 'Sabado' ];
+			var day = days[currentDate.getDay()];
+			var date = currentDate.getDate().toString().padStart(2, "0");
+			var months = [ 'enero', 'febrero', 'marzo', 'abril', 'mayo',
+					'junio', 'julio', 'agosto', 'septiembre', 'octubre',
+					'noviembre', 'diciembre' ];
+			var month = months[currentDate.getMonth()];
+			var year = currentDate.getFullYear().toString();
+			return day + ' ' + date + ' de ' + month + ' de ' + year;
+		}
+
+		// Actualizar la hora y fecha cada segundo
+		function updateCurrentDateTime() {
+			var currentTime = getCurrentTime();
+			var currentDate = getCurrentDate();
+			currentDateTimeElement.textContent = currentTime + " - "
+					+ currentDate;
+		}
+
+		// Actualizar la hora y fecha inicial y luego cada segundo
+		updateCurrentDateTime();
+		setInterval(updateCurrentDateTime, 1000);
+
+		function updateCurrentDateTime() {
+			var currentTimeElement = document.getElementById("currentTime");
+			var currentDateElement = document.getElementById("currentDate");
+
+			var currentTime = getCurrentTime();
+			var currentDate = getCurrentDate();
+
+			currentTimeElement.textContent = currentTime;
+			currentDateElement.textContent = currentDate;
+		}
+	</script>
+
+	<div class="ajustar">
+		<h4 class="h4-cliente">LISTA DE PRODUCTOS</h4>
+		<!-- BUSQUEDA DEL CLIENTE -->
+		<div class="card">
+			<div class="card-header" style="font-weight: bold;">BÃºsqueda</div>
+			<div class="card-body">
+				<form method="post" action="#" class="credit-card-div">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<div class="row">
+								<div class="col-md-3 col-sm-3 col-xs-3">
+									<span class="help-block text-muted small-font"
+										style="font-weight: bold;">Nombre</span> <input type="text"
+										class="form-control border-black" id="name" />
+								</div>
+								<div class="col-md-3 col-sm-3 col-xs-3">
+									<span class="help-block text-muted small-font"
+										style="font-weight: bold;">Tipo</span> <input type="text"
+										class="form-control border-black" id="type" />
+								</div>
+								<div class="col-md-2 col-sm-2 col-xs-2" id="Buscar">
+									<br>
+									<button type="button" class="btn btn-light border-black"
+										id="btnBuscar" style="width: auto;" name="btnBuscar">
+										<img src="IMG/buscar.png" alt=""
+											style="display: block; margin: auto; width: 20px;">
+									</button>
+								</div>
+								<div class="col-md-2 col-sm-2 col-xs-2" id="BuscarInactivos"
+									style="display: none;">
+									<br>
+									<button type="button" class="btn btn-light border-black"
+										id="btnBuscarInactivos" style="width: auto;"
+										name="btnBuscarInactivos">
+										<img src="IMG/buscar.png" alt=""
+											style="display: block; margin: auto; width: 20px;">
+									</button>
+								</div>
+								<div class="col-md-2 col-sm-3">
+									<br />
+									<button type="button" class="btn btn-success" id="btnNuevo"
+										name="btnNuevo">
+										<img src="" alt="">Nuevo
+									</button>
+								</div>
+								<div class="col-md-2 col-sm-3" id="ocultar_inactivos">
+									<br />
+									<button type="button" class="btn btn-danger" id="btnInactivos"
+										name="btnInactivos">
+										<img src="IMG/eliminados.png" alt="">Inactivos
+									</button>
+								</div>
+								<div class="col-md-2 col-sm-3" id="mostrar_activos"
+									style="display: none;">
+									<br />
+									<button type="button" class="btn btn-primary" id="btnActivos"
+										name="btnActivos">
+										<img src="IMG/activos.png" alt="">Activos
+									</button>
 								</div>
 							</div>
-							<br />
-						<!-- Card de resultados -->
-							<div class="card" id="divResultado">
-								<div class="card-header">Resultados</div>
-								<div class="card-body" style="overflow-x: auto;">
-								
-								
-								 
-									<table class="table">
-										<caption>Aqui podemos encontrar los datos de los
-											Productos</caption>
-										<thead>
-											<tr>
-												<th>Codigo</th>
-												<th>Nombre</th>
-												<th>Descripcion</th>
-												<th>Puntos</th>
-												<th>Stock</th>
-												<th>Tipo</th>
-												<th>Marca</th>
-												<th>ACCION</th>
-											</tr>
-										</thead>
-										<tbody id="detalleTabla">
-										</tbody>
-									</table>
-								</div>
-							</div>
-								<style>
-								.card {
-									width: 135%;
-								}
-								</style>
-
-				<!-- Formulario de edicion de registro -->
-							<div class="card" id="divRegistro" style="display: none;">
-								<div class="card-header" id="tituloRegistro">{accion}
-									EMPLEADO</div>
-								<div class="card-body">
-									<form>
-										<input type="hidden" id="accion" name="accion">
-										<!-- Codigo de barra -->
-										<div class="row mb-3">
-											<label for="frmId" class="col-sm-2 col-form-label">Codigo</label>
-											<div class="col-sm-10">
-												<input type="text" class="form-control" id="frmId" name="frmId" >
-												<div class="valid-feedback">Correcto</div>
-											    <div class="invalid-feedback">Es necesario escribir exactamente 6 números en el código de barras</div>
-											</div>
-										</div>
-											<script>
-											// ObtÃ©n el elemento del campo de entrada por su ID
-											var frmCellphone = document
-													.getElementById("frmId");
-
-											// Agrega un evento de escucha para el evento "input"
-											frmCellphone
-													.addEventListener(
-															"input",
-															function() {
-																// Elimina cualquier carÃ¡cter que no sea un nÃºmero
-																var value = frmCellphone.value
-																		.replace(
-																				/\D/g,
-																				"");
-
-																// Limita el valor a 9 dÃ­gitos
-																if (value.length > 9) {
-																	value = value
-																			.slice(
-																					0,
-																					9);
-																}
-
-																// Asigna el valor modificado de vuelta al campo de entrada
-																frmCellphone.value = value;
-															});
-											</script>
-											
-					
-									<!-- Nombre  -->
-											<div class="row mb-3">
-										    <label for="frmName" class="col-sm-2 col-form-label">Nombre</label>
-											    <div class="col-sm-10">
-											        <input type="text" class="form-control" id="frmName" name="frmName" required pattern="[A-Za-záéíóúÁÉÍÓÚ\s]+">
-											        <div class="valid-feedback">Correcto</div>
-											        <div class="invalid-feedback">Es necesario escribir solo letras en el campo de Nombre</div>
-											    </div>
-											</div>
-
-											<script>
-											var nombresInput = document
-												.getElementById('frmName');
-											nombresInput
-												.addEventListener(
-													'input',
-													function(event) {
-														var nombres = event.target.value;
-														var regex = /^[A-Za-z\s]+$/;
-														if (nombres === '') {
-															nombresInput.classList
-																	.remove('is-valid');
-															nombresInput.classList
-																	.remove('is-invalid');
-														} else if (regex
-																.test(nombres)) {
-															nombresInput.classList
-																	.remove('is-invalid');
-															nombresInput.classList
-																	.add('is-valid');
-														} else {
-															nombresInput.classList
-																	.remove('is-valid');
-															nombresInput.classList
-																	.add('is-invalid');
-														}
-													});
-											</script>
-									<!-- Descripcion  -->
-											<div class="row mb-3">
-										    <label for="frmDescription" class="col-sm-2 col-form-label">Descripcion</label>
-											    <div class="col-sm-10">
-											        <input type="text" class="form-control" id="frmDescription" name="frmDescription">
-											    </div>
-											</div>
-					
-										
-									<!-- Puntos -->
-											<div class="row mb-3">
-											    <label for="frmPoints" class="col-sm-2 col-form-label">Puntos</label>
-											    <div class="col-sm-10">
-											        <input type="text" class="form-control" id="frmPoints" name="frmPoints" >
-											        <div class="valid-feedback">Correcto</div>
-											        <div class="invalid-feedback">Es necesario ingresar números en el campo de Puntos</div>
-											    </div>
-											</div>
-
-								
-										<script>
-										var numerosInput = document.getElementById('frmPoints');
-										numerosInput.addEventListener('input', function(event) {
-										    var numero = event.target.value;
-										    var regex = /^[0-9]+$/; // Esta expresión regular permite solo números
-
-										    if (numero === '') {
-										        numerosInput.classList.remove('is-valid');
-										        numerosInput.classList.remove('is-invalid');
-										    } else if (regex.test(numero)) {
-										        numerosInput.classList.remove('is-invalid');
-										        numerosInput.classList.add('is-valid');
-										    } else {
-										        numerosInput.classList.remove('is-valid');
-										        numerosInput.classList.add('is-invalid');
-										    }
-										});
-										</script>
-								<!-- Stock -->
-											<div class="row mb-3">
-											    <label for="frmStock" class="col-sm-2 col-form-label">Stock</label>
-											    <div class="col-sm-10">
-											        <input type="number" class="form-control" id="frmStock" name="frmStock" required>
-											        <div class="valid-feedback">todo bien</div>
-											        <div class="invalid-feedback">Es necesario ingresar números en el campo de Puntos</div>
-											    </div>
-											</div>
-
-								
-										<script>
-										var numerosInput = document.getElementById('frmStock');
-										numerosInput.addEventListener('input', function(event) {
-										    var numero = event.target.value;
-										    var regex = /^[0-9]+$/; // Esta expresión regular permite solo números
-
-										    if (numero === '') {
-										        numerosInput.classList.remove('is-valid');
-										        numerosInput.classList.remove('is-invalid');
-										    } else if (regex.test(numero)) {
-										        numerosInput.classList.remove('is-invalid');
-										        numerosInput.classList.add('is-valid');
-										    } else {
-										        numerosInput.classList.remove('is-valid');
-										        numerosInput.classList.add('is-invalid');
-										    }
-										});
-										</script>
-								<!-- Typo  -->
-											<div class="row mb-3">
-										    <label for="frmType" class="col-sm-2 col-form-label">Tipo</label>
-											    <div class="col-sm-10">
-											        <input type="text" class="form-control" id="frmType" name="frmType" >
-											        <div class="valid-feedback">Correcto</div>
-											        <div class="invalid-feedback">Es necesario escribir solo letras en el campo Tipo</div>
-											    </div>
-											</div>
-
-											<script>
-											var tipoInput = document
-											.getElementById('frmType');
-											tipoInput
-											.addEventListener(
-												'input',
-												function(event) {
-													var tipo = event.target.value;
-													var regex = /^[A-Za-z\s]+$/;
-													if (tipo === '') {
-														tipoInput.classList
-																.remove('is-valid');
-														tipoInput.classList
-																.remove('is-invalid');
-													} else if (regex
-															.test(tipo)) {
-														tipoInput.classList
-																.remove('is-invalid');
-														tipoInput.classList
-																.add('is-valid');
-													} else {
-														tipoInput.classList
-																.remove('is-valid');
-														tipoInput.classList
-																.add('is-invalid');
-													}
-												});
-											</script>
-						
-							
-									<!-- Marca -->
-									<div class="row mb-3">
-									    <label for="frmBrand" class="col-sm-2 col-form-label">Marca</label>
-									    <div class="col-sm-10">
-									        <input type="text" class="form-control" id="frmBrand" name="frmBrand" required pattern="[A-Za-záéíóúÁÉÍÓÚ\s]+">
-									        <div class="valid-feedback">Todo bien</div>
-									        <div class="invalid-feedback">Es necesario ingresar solo letras en el campo de Marca</div>
-									    </div>
-									</div>
-
-					
-					
-									<script>
-									var nombresInput = document
-									.getElementById('frmBrand');
-								nombresInput
-									.addEventListener(
-										'input',
-										function(event) {
-											var nombres = event.target.value;
-											var regex = /^[A-Za-z\s]+$/;
-											if (nombres === '') {
-												nombresInput.classList
-														.remove('is-valid');
-												nombresInput.classList
-														.remove('is-invalid');
-											} else if (regex
-													.test(nombres)) {
-												nombresInput.classList
-														.remove('is-invalid');
-												nombresInput.classList
-														.add('is-valid');
-											} else {
-												nombresInput.classList
-														.remove('is-valid');
-												nombresInput.classList
-														.add('is-invalid');
-											}
-										});
-									</script>
-					
-					
-					<button type="button" class="btn btn-primary" id="btnProcesar">Procesar</button>
+						</div>
+					</div>
 				</form>
-			
-
-				
 			</div>
 		</div>
-	
-						</div>
-					</div>
-				</div>
+		<br>
+		<div class="card">
+			<div class="card-header" style="font-weight: bold;">Exportar
+				Datos</div>
+			<div class="card-body d-flex">
+				<button type="button" id="btnExportXLS"
+					class="btn btn-outline-primary">XLS</button>
+				<div class="mx-2"></div>
+				<button type="button" id="btnExportCSV"
+					class="btn btn-outline-success">CSV</button>
+				<div class="mx-2"></div>
+				<button type="button" class="btn btn-outline-dark" onclick="descargaToPDF()">PDF</button>
+			</div>
+		</div>
+		<script>
+		  function descargaToPDF() {
+			  const excludedColumns = [9]; // ï¿½ndice de la columna "Acciones"
+
+			  // Copia de la tabla para eliminar las columnas no deseadas
+			  const table = document.querySelector("table").cloneNode(true);
+			  table.querySelectorAll("th, td").forEach((cell) => {
+			    const columnIndex = cell.cellIndex;
+			    if (excludedColumns.includes(columnIndex)) {
+			      cell.remove();
+			    } 
+			  });
+
+			  const element = document.createElement("div");
+
+			  // Agregar tï¿½tulo a la hoja
+			  const title = document.createElement("h1");
+			  title.classList.add("pdf-title");
+			  title.textContent = "Tabla de Productos";
+			  element.appendChild(title);
+
+			  // Agregar lï¿½neas divisorias a las columnas
+			  const tableWithLines = document.createElement("table");
+			  tableWithLines.classList.add("pdf-table");
+			  tableWithLines.style.width = "90%"; // Establecer el ancho de la tabla al 50% del contenedor
+			  tableWithLines.style.fontSize = "11px"; // Reducir el tamaï¿½o de fuente de la tabla
+			  const rows = table.rows;
+			  const columns = rows[0].cells.length;
+
+			  for (let i = 0; i < rows.length; i++) {
+			    const row = tableWithLines.insertRow();
+			    for (let j = 0; j < columns; j++) {
+			      const cell = row.insertCell();
+			      if (i === 0) {
+			        cell.classList.add("pdf-table-header");
+			      }
+			      cell.innerHTML = rows[i].cells[j].innerHTML;
+			    }
+			  }
+
+			  element.appendChild(tableWithLines);
+
+			  const opt = {
+			    margin: [0.5, 0.1, 1, 0.2], // Mï¿½rgenes superior, derecho, inferior, izquierdo
+			    filename: "Productos.pdf",
+			    image: { type: "jpeg", quality: 0.98 },
+			    html2canvas: { scale: 2 },
+			    jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
+			  };
+
+			  html2pdf().set(opt).from(element).save();
+			}
+
+			document.getElementById("btnExportarPDF").addEventListener("click", exportToPDF);
+		</script>
+
+		<br>
+		<!-- LISTAR LOS CLIENTES -->
+		<div class="card" id="divResultado">
+			<div class="card-header" style="font-weight: bold;">
+				<span id="listaClientesTitulo">Lista de Productos Activos</span>
+			</div>
+			<div class="card-body">
+
+				<table class="table table-hover">
+					<thead class="border-black">
+						<tr>
+							<th scope="col">Codigo</th>
+							<th scope="col">Nombre</th>
+							<th scope="col">Descripcion</th>
+							<th scope="col">Puntos</th>
+							<th scope="col">Stock</th>
+							<th scope="col">Tipo</th>
+							<th scope="col">Marca</th>
+							<th scope="col">Categoria</th>
+							<th scope="col">Acciones</th>
+						</tr>
+
+					</thead>
+					<tbody id="detalleTabla">
+
+					</tbody>
+				</table>
+
 			</div>
 		</div>
 	</div>
+	<br>
+	<!-- Formulario de ediciÃ³n de registro -->
+	<div class="fondo bg-dark bg-opacity-75" id="divRegistro"
+		style="width: auto; height: 100vh; display: none">
+		<div class="card" style="width: 50vw; height: 93vh; margin: auto;">
+			<div class="card-header" id="tituloRegistro">{accion}</div>
+			<div class="card-body">
+				<form class="needs-validation" novalidate>
+					<input type="hidden" id="accion" name="accion">
+					<div class="row mb-4">
+						<label for="frmId" class="col-sm-2 col-form-label">CODIGO</label>
+						<div class="col-sm-7">
+							<input type="text" class="form-control" id="frmId"
+								autocomplete="off" required>
+							<div id="numDocError" class="invalid-feedback">Solo es
+								vÃ¡lido nÃºmeros en este campo.</div>
+							<div class="valid-feedback">Correcto</div>
+						</div>
+					</div>
+					<div class="row mb-4">
+						<label for="frmNumber_document" class="col-sm-2 col-form-label">Nombre</label>
+						<div class="col-sm-7">
+							<input type="text" class="form-control" id="frmName"
+								autocomplete="off" required>
+							<div id="Num_Doc" class="invalid-feedback">Por favor,
+								ingrese un nombre valido</div>
+							<div class="valid-feedback">Correcto</div>
+						</div>
+					</div>
 
-	
-	
-<style>
-
-/*ESTILO PAR AAGRANDAR LOS CAMPOS DE "gRADO" Y "SECCION"*/
-    #grade_field input,
-	#section_field input {
-  height: calc(1.5em + 0.75rem + 2px);
-  padding: 0.375rem 0.75rem;
-  font-size: 0.875rem;
-}
-
-/*ESTOS ESTILOS ES PARA EL BOTON GENERAR CSV */
-    .btn.btn-outline-success.mb-1 {
-        color: gray;
-        transition: color 0.3s, background-color 0.3s; /* Agrega una transición suave */
-        border-color: gray; /* Cambia el color del borde a blanco */
-    }
-
-    .btn.btn-outline-success.mb-1:hover {
-        color: white; /* Cambia el color del texto a blanco */
-        background-color: gray; /* Cambia el color de fondo al mismo gris */
-        border-color: gray; /* Cambia el color del borde a blanco */
-    }
-    }
 
 
-    </style>
+					<div class="row mb-3">
+						<label for="frmNames" class="col-sm-2 col-form-label">Description</label>
+						<div class="col-sm-7">
+							<div id="dynamicInputsContainer">
+								<input type="text" class="form-control" id="frmDescription"
+									autocomplete="off" required>
+							</div>
+							<div class="invalid-feedback">Solo se admiten letras en el
+								nombre.</div>
+							<div class="valid-feedback">Correcto</div>
+						</div>
+					</div>
+					<div class="row mb-4">
+						<label for="frmPoints" class="col-sm-2 col-form-label">Puntos</label>
+						<div class="col-sm-2">
+							<input type="number" class="form-control" autocomplete="off"
+								id="frmPoints" required>
+							<div class="invalid-feedback">Solo se admiten nÃºmeros de 4
+								dÃ­gitos</div>
+							<div class="valid-feedback">Correcto</div>
+						</div>
+					</div>
 
-	<script src="https://kit.fontawesome.com/3d22aaea26.js"
-		crossorigin="anonymous"></script>
-		
-	<script>
-	// Constantes del CRUD
-	const ACCION_NUEVO = "NUEVO";
-	const ACCION_EDITAR = "EDITAR";
-	const ACCION_ELIMINAR = "ELIMINAR";
+					<div class="row mb-4">
+						<label for="frmEmail" class="col-sm-2 col-form-label">Stock</label>
+						<div class="col-sm-2">
+							<input type="number" class="form-control" id="frmStock"
+								autocomplete="off" required>
+							<div class="invalid-feedback">Por favor, ingrese un stock
+								valido de maximo 2 digitos</div>
+							<div class="valid-feedback">Correcto</div>
+						</div>
+					</div>
 
-	// Arreglo de registros
-	let arreglo = [];
+					<div class="row mb-3">
+						<label for="frmType_document" class="col-sm-2 col-form-label">Tipo
+							de Producto</label>
+						<div class="col-md-2" style="width: auto;">
+							<select class="form-select" id="frmType">
+								<option selected>CELULAR</option>
+								<option selected>AUDIFONOS</option>
+								<option selected>RECARGAS</option>
+								<option selected>CUPON</option>
+								<option selected>OTROS</option>
+							</select>
+						</div>
+					</div>
+					<div class="row mb-4">
+						<label for="frmLast_name" class="col-sm-2 col-form-label">Marca</label>
+						<div class="col-sm-7">
+							<input type="text" class="form-control" autocomplete="off"
+								id="frmBrand" required>
+							<div class="invalid-feedback">Solo se admiten letras en el
+								Campo.</div>
+							<div class="valid-feedback">Correcto</div>
+						</div>
+					</div>
+					<div class="row mb-4">
+						<label for="frmCategory_name" class="col-sm-3 col-form-label">Categoria</label>
+						<div class="col-sm-8" style="width: auto;">
+							<select class="form-select" id="frmCategory_name">
+							</select>
+						</div>
+					</div>
 
-	// Acceder a los controles
-	let btnBuscar = document.getElementById("btnBuscar");
-	let btnNuevo = document.getElementById("btnNuevo");
-	let btnProcesar = document.getElementById("btnProcesar");
+					<div class="d-flex justify-content-end">
+						<button onclick="alerta()" type="submit" class="btn btn-success"
+							id="btnProcesar" style="width: auto;" disabled>
+							<i class="fa-solid fa-folder-open fa-2xl" style="color: #000000;"></i>
+						</button>
+						<div class="mx-2"></div>
+						<!-- Espacio horizontal -->
+						<button type="button" class="btn btn-danger" id="btnCancelar"
+							style="width: auto;">
+							<img src="IMG/prohibido.png" alt=""> Cancelar
+						</button>
+					</div>
+					<script>
+						function alerta() {
+							Swal.fire({
+								title : "Guardado!",
+								text : "Registro guardado correctamente",
+								icon : "success"
+							});
 
-	// Programar los controles
-	btnBuscar.addEventListener("click", fnBtnBuscar);
-	btnNuevo.addEventListener("click", fnBtnNuevo);  // Agregamos el evento click para el botón "Nuevo"
-	btnProcesar.addEventListener("click", fnBtnProcesar);
+						}
+					</script>
 
-	// Campos del formulario
-	let accion = document.getElementById('accion');
-	let frmId = document.getElementById('frmId');
-	let frmName = document.getElementById('frmName')
-	let frmDescription = document.getElementById('frmDescription')
-	let frmPoints = document.getElementById('frmPoints');
-	let frmStock = document.getElementById('frmStock');
-	let frmType = document.getElementById('frmType');
-	let frmBrand = document.getElementById('frmBrand');
-
-	// Programar los controles
-	btnBuscar.addEventListener("click", fnBtnBuscar);
-	btnNuevo.addEventListener("click", fnBtnNuevo);
-	btnProcesar.addEventListener("click", fnBtnProcesar);
-
-	// Funcion fnEditar
-	function fnEditar(id) {
-		// Preparando el formulario
-		document.getElementById("tituloRegistro").innerHTML = ACCION_EDITAR
-			+ " REGISTRO";
-		document.getElementById("accion").value = ACCION_EDITAR;
-		fnCargarForm(id);
-		fnEstadoFormulario(ACCION_EDITAR)
-		// Mostrar formulario
-		document.getElementById("divResultado").style.display = "none";
-		document.getElementById("divRegistro").style.display = "block";
-	}
-
-	// Funcion fnEliminar
-	function fnEliminar(id) {
-		// Preparando el formulario
-
-		document.getElementById("accion").value = ACCION_ELIMINAR;
-		fnCargarForm(id);
-		fnBtnProcesar();
-		fnBtnBuscar();
-	}
-
-	// Funcion fnBtnProcesar
-	function fnBtnProcesar() {
-		// Validar
-		if (!fnValidar()) {
-			return;
-		}
-		// Preparar los datos
-		let datos = "accion=" + document.getElementById("accion").value;
-		datos += "&id=" + document.getElementById("frmId").value;
-		datos += "&name=" + document.getElementById("frmName").value;
-		datos += "&description=" + document.getElementById("frmDescription").value;
-		datos += "&points=" + document.getElementById("frmPoints").value;
-		datos += "&stock="
-			+ document.getElementById("frmStock").value;
-		datos += "&type=" + document.getElementById("frmType").value;
-		datos += "&brand="
-			+ document.getElementById("frmBrand").value;
-		// El envio con AJAX
-		let xhr = new XMLHttpRequest();
-		xhr.open("POST", "ClienteProcesar", true);
-		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-		xhr.onreadystatechange = function() {
-			if (xhr.readyState === 4 && xhr.status === 200) {
-				// La solicitud se completó correctamente
-				console.log(xhr.responseText);
-				alert(xhr.responseText);
-			}
-		};
-		xhr.send(datos);
-	}
-
-	// Funcion fnBtnNuevo
-	function fnBtnNuevo() {
-		// Preparando el formulario
-		document.getElementById("tituloRegistro").innerHTML = ACCION_NUEVO + " REGISTRO";
-		document.getElementById("accion").value = ACCION_NUEVO;
-		fnEstadoFormulario(ACCION_NUEVO);
-
-		// Mostrar formulario
-		document.getElementById("divResultado").style.display = "none";
-		document.getElementById("divRegistro").style.display = "block";
-	}
-	document.addEventListener("DOMContentLoaded", function() {
-		// Mostrar la lista de clientes al cargar la página
-		fnBtnBuscar();
-	});
-	// Función fnBtnBuscar
-	function fnBtnBuscar() {
-		// Datos
-		let name = document.getElementById("name").value;
-		let type = document.getElementById("type").value;
-
-		let url = "btnBuscar?name=" + name;
-		url += "&type=" + type;
-		// La llama AJAX
-		let xhttp = new XMLHttpRequest();
-		xhttp.open("GET", url, true);
-		xhttp.onreadystatechange = function() {
-			if (this.readyState == 4 && this.status == 200) {
-				let respuesta = xhttp.responseText;
-				arreglo = JSON.parse(respuesta);
-				let detalleTabla = "";
-				arreglo.forEach(function(item) {
-					detalleTabla += "<tr>";
-					detalleTabla += "<th scope='row'>" + item.id + "</th>";
-					detalleTabla += "<td>" + item.name + "</td>";
-					detalleTabla += "<td>" + item.description + "</td>";
-					detalleTabla += "<td>" + item.points + "</td>";
-					detalleTabla += "<td>" + item.stock + "</td>";
-					detalleTabla += "<td>" + item.type + "</td>";
-					detalleTabla += "<td>" + item.brand + "</td>";
-					detalleTabla += "<td>";
-					detalleTabla += "<a href='javascript:fnEditar(" + item.id + ");' class='btn btn-primary btn-icon'><i class='fas fa-pencil-alt'></i></a> ";
-					detalleTabla += "<a href='javascript:fnEliminar(" + item.id + ");' class='btn btn-danger btn-icon'><i class='fas fa-trash-alt'></i></a>";
-					detalleTabla += "</td>";
-					detalleTabla += "</tr>";
-				});
-				document.getElementById("detalleTabla").innerHTML = detalleTabla;
-				// Mostrar formulario
-				document.getElementById("divResultado").style.display = "block";
-				document.getElementById("divRegistro").style.display = "none";
-			}
-		};
-		xhttp.send();
-	}
-
-	function fnCargarForm(id) {
-		arreglo.forEach(function(item) {
-			if (item.id == id) {
-				frmId.value = item.id;
-				frmName.value = item.name;
-				frmDescription.value = item.description;
-				frmPoints.value = item.points;
-				frmStock.value = item.stock;
-				frmType.value = item.type;
-				frmBrand.value = item.brand;
-				return true;
-			}
-		});
-	}
-
-	function fnEstadoFormulario(estado) {
-		frmName.disabled = (estado == ACCION_ELIMINAR)
-		frmDescription.disabled = (estado == ACCION_ELIMINAR)
-		frmPoints.disabled = (estado == ACCION_ELIMINAR)
-		frmStock.disabled = (estado == ACCION_ELIMINAR)
-		frmType.disabled = (estado == ACCION_ELIMINAR)
-		frmBrand.disabled = (estado == ACCION_ELIMINAR)
-		if (estado == ACCION_NUEVO) {
-			frmId.value = "";
-			frmName.value = "";
-			frmDescription.value = "";
-			frmPoints.value = "";
-			frmStock.value = "";
-			frmType.value = "";
-			frmBrand.value = "";
-		}
-	}
-
-	function fnValidar() {
-
-		return true;
-	}	
-	</script>
+				</form>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript" src="js/crudProducto.js"></script>
+	<script type="text/javascript" src="js/FormValidacion.js"></script>
+	<script type="text/javascript" src="js/Descargas.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>

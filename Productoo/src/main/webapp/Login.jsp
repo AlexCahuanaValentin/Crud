@@ -1,11 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-	pageEncoding="ISO-8859-1"%>
+    pageEncoding="ISO-8859-1"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
-<html lang="en">
+<html >
 <head>
-<!-- codigo para poner logo en pestaña de navegador -->
+<meta charset="ISO-8859-1">
 <link rel="icon" type="image/png" sizes="100x100"
-	href="img\Claro.svg.png">
+	href="Image\Claro.svg.png">
 <meta charset="UTF-8" />
 <link rel="icon" type="image/x-icon" href="/assets/logo-vt.svg" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -18,53 +19,48 @@
 	crossorigin="anonymous" />
 <style>
 .custom-bg {
-	background-image: url("img/Imagen1.jpg");
+	background-image: url("IMG/Imagen1.jpg");
 	background-size: cover;
 	background-position: center;
 }
 </style>
 </head>
-<body
-	class="custom-bg d-flex justify-content-center align-items-center vh-100">
-	<div class="bg-white p-5 rounded-5 text-secondary shadow"
-		style="width: 25rem">
+<body class="custom-bg d-flex justify-content-center align-items-center vh-100">
+	<div class="bg-white p-5 rounded-5 text-secondary shadow" style="width: 25rem">
 		<div class="d-flex justify-content-center">
-			<img src="img\Claro.svg.png" alt="login-icon" style="height: 7rem" />
+			<img src="Image\Claro.svg.png" alt="login-icon" style="height: 7rem" />
 		</div>
-		<div class="text-black text-center fs-1 fw-bold">Acceder</div>
-		<div class="input-group mt-4">
-			<div class="input-group-text bg-danger">
-				<img src="img/username-icon.svg" alt="username-icon"
+		<div class="text-black text-center fs-1 fw-bold">Ingresar </div>
+		<form method="post" action="InicioSession">
+			<div class="input-group mt-4">
+				<div class="input-group-text bg-danger">
+				<img src="Image/username-icon.svg" alt="username-icon"
 					style="height: 1rem" />
+				</div>
+				<input class="form-control bg-light"  type="text" placeholder="usuario" name="usuario" />
 			</div>
-			<input class="form-control bg-light" type="text" placeholder="DNI" />
-		</div>
-		<div class="input-group mt-1">
-			<div class="input-group-text bg-danger">
-				<img src="img/password-icon.svg" alt="password-icon"
+			<div class="input-group mt-1">
+				<div class="input-group-text bg-danger">
+				<img src="Image/password-icon.svg" alt="password-icon"
 					style="height: 1rem" />
+				</div>
+				<input  class="form-control bg-light" type="password" placeholder="password" name="password" />
 			</div>
-			<input class="form-control bg-light" type="password"
-				placeholder="Password" />
+
+
+			<div class="text-center mt-4 mx-auto"  style="width: 100px;">
+    <button type="submit" class="input-group-text bg-danger text-white" >
+        Ingresar
+    </button>
+</div>
+
+
+		</form>
+
+	<c:if test="${not empty error}">
+		<div style="padding: 15px; color:red;">
+			${error}
 		</div>
-		<div class="d-flex justify-content-around mt-1">
-			<div class="pt-1">
-				<a href="ContactAdmin.jsp"
-					class="text-decoration-none text-danger fw-semibold fst-italic"
-					style="font-size: 0.9rem">Forgot your password?</a>
-			</div>
-		</div>
-		
-		<!-- Solo es una prueba de enlace cuando se ingrese al sistema -->
-		<a href="ListarClientes.jsp" class="text-decoration-none text-white"><div
-				class="btn bg-danger text-white w-100 mt-4 fw-semibold shadow-sm">
-				Login</div></a>
-				
-		<div class="d-flex gap-1 justify-content-center mt-1">
-			<div>Don't have an account?</div>
-			<a href="Registrarse.jsp "
-				class="text-decoration-none text-danger fw-semibold fst-italic">Register</a>
-		</div>
-	</div>
+	</c:if>
 </body>
 </html>

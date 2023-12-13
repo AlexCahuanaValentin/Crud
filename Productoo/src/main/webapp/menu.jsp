@@ -410,13 +410,9 @@ body.dark .switch::before{
 body.dark .home .text{
     color: var(--text-color);
 }
-
-
-
-
 </style>
 
-    <script src="js/script.js"></script>
+    <script src="JS/script.js"></script>
 </body>
 </html>
 

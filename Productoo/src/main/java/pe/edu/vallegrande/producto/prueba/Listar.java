@@ -13,7 +13,7 @@ public class Listar {
             System.out.println("Filas: " + lista.size());
             for (Producto rec : lista) {
                 System.out.println(rec.getId() + "|" + rec.getName() + "|" + rec.getDescription() + "|"
-                        + rec.getPoints() + "|" + rec.getStock() + "|" + rec.getType() + "|" + rec.getBrand());
+                        + rec.getPoints() + "|" + rec.getStock() + "|" + rec.getType() + "|" + rec.getBrand() + "|" + rec.getCategory_name());
             }
         } catch (Exception e) {
             System.err.println("Error al mostrar la lista de productos: " + e.getMessage());

@@ -2,7 +2,7 @@ package pe.edu.vallegrande.producto.service.spec;
 
 import java.util.List;
 
-public interface CrudServiceSpec<T> {
+public interface CrudServiceCategoryProductSpec<T> {
 
 	/**
 	 * Consulta todos los registros de la tabla.
@@ -10,6 +10,12 @@ public interface CrudServiceSpec<T> {
 	 * @return Retorna una lista de objetos.
 	 */
 	List<T> getAll();
+	/**
+	 * Consulta todos los registros de la tabla.
+	 *
+	 * @return Retorna una lista de objetos.
+	 */
+	List<T> getAllCategory();
 
 	/**
 	 * Permite consultar un registro especifico de la tabla en base de su ID.

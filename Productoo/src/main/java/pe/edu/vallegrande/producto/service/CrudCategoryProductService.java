@@ -6,35 +6,27 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 import pe.edu.vallegrande.producto.db.AccesoDB;
-import pe.edu.vallegrande.producto.model.Producto;
-import pe.edu.vallegrande.producto.service.spec.CrudServiceSpec;
+import pe.edu.vallegrande.producto.model.CategoryProductModel;
+import pe.edu.vallegrande.producto.service.spec.CrudServiceCategoryProductSpec;
 
-public class CrudProductoService implements CrudServiceSpec<Producto> {
-	// LISTAR LOS CLIENTES ACTIVOS
+public class CrudCategoryProductService implements CrudServiceCategoryProductSpec<CategoryProductModel> {
+	// LISTAR LOS Categoria de productos ACTIVOS
 	@Override
-	public List<Producto> getAll() {
-		List<Producto> lista = new ArrayList<>();
+	public List<CategoryProductModel> getAll() {
+		List<CategoryProductModel> lista = new ArrayList<>();
 		Connection cn = null;
-		Producto rec = null;
+		CategoryProductModel rec = null;
 		try {
 			cn = AccesoDB.getConnection();
-			String sql = "SELECT p.id, p.name, p.description, p.points, p.stock, p.type, p.brand, cp.name AS category_name FROM product p "
-					+ "JOIN category_product cp ON p.category_product_id = cp.id " + "WHERE p.state='A'";
+			String sql = "SELECT id, name, description FROM category_product WHERE state='A'";
 			PreparedStatement pstm = cn.prepareStatement(sql);
 			ResultSet rs = pstm.executeQuery();
 			while (rs.next()) {
-				rec = new Producto();
+				rec = new CategoryProductModel();
 				rec.setId(rs.getInt("id"));
 				rec.setName(rs.getString("name"));
 				rec.setDescription(rs.getString("description"));
-				rec.setPoints(rs.getString("points"));
-				rec.setStock(rs.getInt("stock"));
-				rec.setType(rs.getString("type"));
-				rec.setBrand(rs.getString("brand"));
-				rec.setCategory_name(rs.getString("category_name"));
-				
 				lista.add(rec);
 			}
 			rs.close();
@@ -51,67 +43,59 @@ public class CrudProductoService implements CrudServiceSpec<Producto> {
 		}
 		return lista;
 	}
-	
+
 	// listar inactivos
-		@Override
-		public List<Producto> getAllInac() {
-			List<Producto> lista = new ArrayList<>();
-			Connection cn = null;
-			Producto rec = null;
-			try {
-				cn = AccesoDB.getConnection();
-				String sql = "SELECT p.id, p.name, p.description, p.points, p.stock, p.type, p.brand, cp.name AS category_name FROM product p "
-						+ "JOIN category_product cp ON p.category_product_id = cp.id " + "WHERE p.state='I'";
-				PreparedStatement pstm = cn.prepareStatement(sql);
-				ResultSet rs = pstm.executeQuery();
-				while (rs.next()) {
-					rec = new Producto();
-					rec.setId(rs.getInt("id"));
-					rec.setName(rs.getString("name"));
-					rec.setDescription(rs.getString("description"));
-					rec.setPoints(rs.getString("points"));
-					rec.setStock(rs.getInt("stock"));
-					rec.setType(rs.getString("type"));
-					rec.setBrand(rs.getString("brand"));
-					rec.setState(rs.getString("state"));
-					lista.add(rec);
-				}
-				rs.close();
-				pstm.close();
-			} catch (SQLException e) {
-				throw new RuntimeException(e.getMessage());
-			} catch (Exception e) {
-				throw new RuntimeException("Error en el proceso");
-			} finally {
-				try {
-					cn.close();
-				} catch (Exception e) {
-				}
-			}
-			return lista;
-		}
 	@Override
-	public Producto getById(Integer id) {
+	public List<CategoryProductModel> getAllInac() {
+		List<CategoryProductModel> lista = new ArrayList<>();
+		Connection cn = null;
+		CategoryProductModel rec = null;
+		try {
+			cn = AccesoDB.getConnection();
+			String sql = "SELECT id, name, description, state " + "FROM category_product WHERE state='I'";
+			PreparedStatement pstm = cn.prepareStatement(sql);
+			ResultSet rs = pstm.executeQuery();
+			while (rs.next()) {
+				rec = new CategoryProductModel();
+				rec.setId(rs.getInt("id"));
+				rec.setName(rs.getString("name"));
+				rec.setDescription(rs.getString("description"));
+				rec.setState(rs.getString("state"));
+				lista.add(rec);
+			}
+			rs.close();
+			pstm.close();
+		} catch (SQLException e) {
+			throw new RuntimeException(e.getMessage());
+		} catch (Exception e) {
+			throw new RuntimeException("Error en el proceso");
+		} finally {
+			try {
+				cn.close();
+			} catch (Exception e) {
+			}
+		}
+		return lista;
+	}
+
+	@Override
+	public CategoryProductModel getById(Integer id) {
 		// preparando los datos
 		Connection cn = null;
-		Producto bean = null;
+		CategoryProductModel bean = null;
 		// proceso
 		try {
 			cn = AccesoDB.getConnection();
-			String sql = "select id, name, description, points, stock, type, brand from product ";
+			String sql = "select id, name, description from category_product ";
 			sql += "where state = 'A' and id = ?";
 			PreparedStatement pstm = cn.prepareStatement(sql);
 			pstm.setInt(1, id);
 			ResultSet rs = pstm.executeQuery();
 			if (rs.next()) {
-				bean = new Producto();
+				bean = new CategoryProductModel();
 				bean.setId(rs.getInt("id"));
 				bean.setName(rs.getString("name"));
 				bean.setDescription(rs.getString("description"));
-				bean.setPoints(rs.getString("points"));
-				bean.setStock(rs.getInt("stock"));
-				bean.setType(rs.getString("type"));
-				bean.setBrand(rs.getString("brand"));
 			}
 			rs.close();
 			pstm.close();
@@ -129,33 +113,28 @@ public class CrudProductoService implements CrudServiceSpec<Producto> {
 	}
 
 	@Override
-	public List<Producto> get(Producto bean) {
+	public List<CategoryProductModel> get(CategoryProductModel bean) {
 		// preparando los datos
+		Integer id = bean.getId();
+		String idString = (id != null) ? "%" + id.toString().trim() + "%" : "%%";
 		String name = bean.getName() != null ? "%" + bean.getName().trim() + "%" : "%%";
-		String type = bean.getType() != null ? "%" + bean.getType().trim() + "%" : "%%";
-		List<Producto> lista = new ArrayList<>();
+		List<CategoryProductModel> lista = new ArrayList<>();
 		Connection cn = null;
-		Producto rec = null;
+		CategoryProductModel rec = null;
 		// proceso
 		try {
 			cn = AccesoDB.getConnection();
-			String sql = "SELECT p.id, p.name, p.description, p.points, p.stock, p.type, p.brand, cp.name AS category_name FROM product p "
-					+ "JOIN category_product cp ON p.category_product_id = cp.id " 
-					+ "WHERE p.state='A' AND p.name LIKE ? AND p.type LIKE ?";
+			String sql = "select id, name, description from category_product ";
+			sql += "where state = 'A' and id like ? and name like ?";
 			PreparedStatement pstm = cn.prepareStatement(sql);
-			pstm.setString(1, name);
-			pstm.setString(2, type);
+			pstm.setString(1, idString);
+			pstm.setString(2, name);
 			ResultSet rs = pstm.executeQuery();
 			while (rs.next()) {
-				rec = new Producto();
+				rec = new CategoryProductModel();
 				rec.setId(rs.getInt("id"));
 				rec.setName(rs.getString("name"));
 				rec.setDescription(rs.getString("description"));
-				rec.setPoints(rs.getString("points"));
-				rec.setStock(rs.getInt("stock"));
-				rec.setType(rs.getString("type"));
-				rec.setBrand(rs.getString("brand"));
-				rec.setCategory_name(rs.getString("category_name"));
 				lista.add(rec);
 			}
 			rs.close();
@@ -174,7 +153,7 @@ public class CrudProductoService implements CrudServiceSpec<Producto> {
 	}
 
 	@Override
-	public Producto insert(Producto bean) {
+	public CategoryProductModel insert(CategoryProductModel bean) {
 		// Variables
 		Integer id;
 		Connection cn = null;
@@ -186,21 +165,11 @@ public class CrudProductoService implements CrudServiceSpec<Producto> {
 			// Inicio de la TX
 			cn = AccesoDB.getConnection();
 			cn.setAutoCommit(false);
-			
-			// Obtener el ID de la categoría a partir del nombre
-			int categoryId = getCategoryIdByName(cn, bean.getCategory_name());
-						
 			// Insertar registro
-			sql = "INSERT INTO product(id, name, description, points, stock, type, brand, category_product_id)VALUES(?,?,?,?,?,?,?,?)";
+			sql = "INSERT INTO category_product(name, description)VALUES(?,?)";
 			pstm = cn.prepareStatement(sql);
-			pstm.setString(1, bean.getId() + "");
-			pstm.setString(2, bean.getName());
-			pstm.setString(3, bean.getDescription());
-			pstm.setString(4, bean.getPoints());
-			pstm.setInt(5, bean.getStock());
-			pstm.setString(6, bean.getType());
-			pstm.setString(7, bean.getBrand());
-			pstm.setInt(8, categoryId);
+			pstm.setString(1, bean.getName());
+			pstm.setString(2, bean.getDescription());
 			pstm.executeUpdate();
 			// obteniendo el id
 			sql = "SELECT @@IDENTITY id";
@@ -228,27 +197,9 @@ public class CrudProductoService implements CrudServiceSpec<Producto> {
 		// Reporte
 		return bean;
 	}
-	
-	// Método para obtener el ID de la categoría a partir del nombre
-		private int getCategoryIdByName(Connection cn, String categoryName) throws SQLException {
-			int categoryId = 0; // Suponiendo que el ID no puede ser 0; ajusta según tu lógica
-
-			String getCategoryIDSQL = "SELECT id FROM category_product WHERE name = ?";
-			try (PreparedStatement getCategoryIDStatement = cn.prepareStatement(getCategoryIDSQL)) {
-				getCategoryIDStatement.setString(1, categoryName);
-
-				try (ResultSet categoryIDResultSet = getCategoryIDStatement.executeQuery()) {
-					if (categoryIDResultSet.next()) {
-						categoryId = categoryIDResultSet.getInt("id");
-					}
-				}
-			}
-
-			return categoryId;
-		}
 
 	@Override
-	public Producto update(Producto bean) {
+	public CategoryProductModel update(CategoryProductModel bean) {
 		// Variables
 		Connection cn = null;
 		PreparedStatement pstm;
@@ -258,21 +209,12 @@ public class CrudProductoService implements CrudServiceSpec<Producto> {
 			// Inicio de la TX
 			cn = AccesoDB.getConnection();
 			cn.setAutoCommit(false);
-			
-			// Obtener el ID de la categoría a partir del nombre
-						int categoryId = getCategoryIdByName(cn, bean.getCategory_name());
-						
 			// Actualizar registro
-			sql = "UPDATE product SET name = ?, description = ?, points = ?, stock = ?, type = ?, brand = ?, category_product_id = ? WHERE id = ?";
+			sql = "UPDATE category_product SET name = ?, description = ? WHERE id = ?";
 			pstm = cn.prepareStatement(sql);
 			pstm.setString(1, bean.getName());
 			pstm.setString(2, bean.getDescription());
-			pstm.setString(3, bean.getPoints());
-			pstm.setInt(4, bean.getStock());
-			pstm.setString(5, bean.getType());
-			pstm.setString(6, bean.getBrand());
-			pstm.setInt(7, categoryId);
-			pstm.setInt(8, bean.getId());
+			pstm.setInt(3, bean.getId());
 			int filas = pstm.executeUpdate();
 			pstm.close();
 			if (filas == 0) {
@@ -311,7 +253,7 @@ public class CrudProductoService implements CrudServiceSpec<Producto> {
 			cn = AccesoDB.getConnection();
 			cn.setAutoCommit(false);
 			// Insertar registro
-			sql = "UPDATE product SET state = 'I' WHERE id =?";
+			sql = "UPDATE category_product SET state = 'I' WHERE id =?";
 			pstm = cn.prepareStatement(sql);
 			pstm.setInt(1, id);
 			filas = pstm.executeUpdate();
@@ -351,7 +293,7 @@ public class CrudProductoService implements CrudServiceSpec<Producto> {
 			cn = AccesoDB.getConnection();
 			cn.setAutoCommit(false);
 			// Insertar registro
-			sql = "UPDATE product SET state = 'A' WHERE id =?";
+			sql = "UPDATE category_product SET state = 'A' WHERE id =?";
 			pstm = cn.prepareStatement(sql);
 			pstm.setInt(1, id);
 			filas = pstm.executeUpdate();
@@ -376,31 +318,42 @@ public class CrudProductoService implements CrudServiceSpec<Producto> {
 			}
 		}
 	}
-	
+
 	@Override
-	public List<Producto> getInactive(Producto bean) {
-		List<Producto> lista = new ArrayList<>();
+	public List<CategoryProductModel> getInactive(CategoryProductModel bean) {
+		List<CategoryProductModel> lista = new ArrayList<>();
 		Connection cn = null;
-		Producto rec = null;
+		CategoryProductModel rec = null;
 		try {
 			cn = AccesoDB.getConnection();
-			String sql = "SELECT p.id, p.name, p.description, p.points, p.stock, p.type, p.brand, cp.name AS category_name FROM product p "
-					+ "JOIN category_product cp ON p.category_product_id = cp.id " 
-					+ "WHERE p.state='I' AND p.name LIKE ? AND p.type LIKE ?";
+			String sql = "SELECT id, name, description, state " + "FROM category_product WHERE state='I' ";
+
+			// Agregar condiciones solo si id no es nulo
+			if (bean.getId() != null) {
+				sql += " AND id LIKE ? ";
+			}
+			if (bean.getName() != null) {
+				sql += " AND name LIKE ? ";
+			}
+
 			PreparedStatement pstm = cn.prepareStatement(sql);
-			pstm.setString(1, "%" + bean.getName() + "%");
-			pstm.setString(2, "%" + bean.getType() + "%");
+
+			// Establecer parámetros solo si id no es nulo
+			int parameterIndex = 1;
+			if (bean.getId() != null) {
+				pstm.setString(parameterIndex++, "%" + bean.getId() + "%");
+			}
+			if (bean.getName() != null) {
+				pstm.setString(parameterIndex++, "%" + bean.getName() + "%");
+			}
+
 			ResultSet rs = pstm.executeQuery();
 			while (rs.next()) {
-				rec = new Producto();
+				rec = new CategoryProductModel();
 				rec.setId(rs.getInt("id"));
 				rec.setName(rs.getString("name"));
 				rec.setDescription(rs.getString("description"));
-				rec.setPoints(rs.getString("points"));
-				rec.setStock(rs.getInt("stock"));
-				rec.setType(rs.getString("type"));
-				rec.setBrand(rs.getString("brand"));
-				rec.setCategory_name(rs.getString("category_name"));
+				rec.setState(rs.getString("state"));
 				lista.add(rec);
 			}
 			rs.close();
@@ -418,5 +371,34 @@ public class CrudProductoService implements CrudServiceSpec<Producto> {
 		return lista;
 	}
 
+	@Override
+	public List<CategoryProductModel> getAllCategory() {
+		List<CategoryProductModel> lista = new ArrayList<>();
+		Connection cn = null;
+		CategoryProductModel rec = null;
+		try {
+			cn = AccesoDB.getConnection();
+			String sql = "SELECT name FROM category_product WHERE state='A'";
+			PreparedStatement pstm = cn.prepareStatement(sql);
+			ResultSet rs = pstm.executeQuery();
+			while (rs.next()) {
+				rec = new CategoryProductModel();
+				rec.setName(rs.getString("name"));
+				lista.add(rec);
+			}
+			rs.close();
+			pstm.close();
+		} catch (SQLException e) {
+			throw new RuntimeException(e.getMessage());
+		} catch (Exception e) {
+			throw new RuntimeException("Error en el proceso");
+		} finally {
+			try {
+				cn.close();
+			} catch (Exception e) {
+			}
+		}
+		return lista;
+	}
 
 }

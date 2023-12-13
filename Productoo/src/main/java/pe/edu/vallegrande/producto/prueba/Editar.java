@@ -8,19 +8,20 @@ public class Editar {
 	public static void main(String[] args) {
 		try {
 			// Datos del cliente a editar
-			int clienteId = 123427;
+			int clienteId = 123478;
 			// Consultar el cliente actual
 			CrudProductoService consultaService = new CrudProductoService();
 			Producto cliente = consultaService.getById(clienteId);
 
 			if (cliente != null) {
 				// Modificar los datos del producto
-				cliente.setName("audifonos");
-				cliente.setDescription("con 8h de carga");
-				cliente.setPoints("3500");
-				cliente.setStock(02);
-				cliente.setType("audifonos");
-				cliente.setBrand("xiomi");
+				cliente.setName("diego");
+				cliente.setDescription("quiere su huevo");
+				cliente.setPoints("3000");
+				cliente.setStock(20);
+				cliente.setType("CUPON");
+				cliente.setBrand("akita");
+				cliente.setCategory_name("IPHON");
 
 				// Actualizar el cliente
 				CrudProductoService servicio = new CrudProductoService();

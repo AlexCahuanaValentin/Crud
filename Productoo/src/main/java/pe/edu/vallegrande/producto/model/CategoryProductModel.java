@@ -8,14 +8,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class Producto {
+public class CategoryProductModel {
 	private Integer id;
 	private String name;
 	private String description;
-	private String points;
-	private Integer stock;
-	private String type;
-	private String brand;
 	private String state;
-	private String category_name;
+	private String idStr; // Agrega esta propiedad
 }

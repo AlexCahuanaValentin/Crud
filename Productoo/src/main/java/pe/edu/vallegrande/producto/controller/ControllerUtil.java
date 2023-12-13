@@ -13,6 +13,7 @@ public class ControllerUtil {
 	public final static String CRUD_NUEVO = "NUEVO";
 	public final static String CRUD_EDITAR = "EDITAR";
 	public final static String CRUD_ELIMINAR = "ELIMINAR";
+	public final static String CRUD_ACTIVAR = "ACTIVAR";
 
 	public static void responseJson(HttpServletResponse response, String data) {
 		try {
